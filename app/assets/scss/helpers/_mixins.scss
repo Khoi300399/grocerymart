@@ -1,0 +1,60 @@
+@mixin size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+@mixin rounded($tl, $tr: $tl, $br: $tl, $bl: $tl) {
+  border-radius: $tl $tr $br $bl;
+}
+
+@mixin position($pos) {
+  @if $pos == tl {
+    top: 0;
+    left: 0;
+  } @else if $pos == tr {
+    top: 0;
+    right: 0;
+  } @else if $pos == bl {
+    bottom: 0;
+    left: 0;
+  } @else if $pos == br {
+    bottom: 0;
+    right: 0;
+  } @else if $pos == cx {
+    left: 50%;
+    translate: -50% 0;
+  } @else if $pos == cy {
+    top: 50%;
+    translate: 0 -50%;
+  } @else if $pos == ce {
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+  }
+}
+
+@mixin responsive($breakpoint) {
+  @if $breakpoint == xs {
+    @content;
+  } @else if $breakpoint == sm {
+    @media only screen and (min-width: 576px) {
+      @content;
+    }
+  } @else if $breakpoint == md {
+    @media only screen and (min-width: 768px) {
+      @content;
+    }
+  } @else if $breakpoint == lg {
+    @media only screen and (min-width: 992px) {
+      @content;
+    }
+  } @else if $breakpoint == xl {
+    @media only screen and (min-width: 1200px) {
+      @content;
+    }
+  } @else if $breakpoint == xxl {
+    @media only screen and (min-width: 1400px) {
+      @content;
+    }
+  }
+}

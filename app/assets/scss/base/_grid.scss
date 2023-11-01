@@ -1,0 +1,130 @@
+@use "sass:math";
+@mixin responsive($breakpoint) {
+  @if $breakpoint == xs {
+    @content;
+  } @else if $breakpoint == sm {
+    @media only screen and (min-width: 576px) {
+      @content;
+    }
+  } @else if $breakpoint == md {
+    @media only screen and (min-width: 768px) {
+      @content;
+    }
+  } @else if $breakpoint == lg {
+    @media only screen and (min-width: 992px) {
+      @content;
+    }
+  } @else if $breakpoint == xl {
+    @media only screen and (min-width: 1200px) {
+      @content;
+    }
+  } @else if $breakpoint == xxl {
+    @media only screen and (min-width: 1400px) {
+      @content;
+    }
+  }
+}
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px,
+);
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px,
+);
+$grid-columns: 12;
+$grid-gutter-width: 30px !default;
+
+$gutters: (
+  0: 0,
+  1: 0.25,
+  2: 0.5,
+  3: 1,
+  4: 1.5,
+  5: 3,
+);
+
+%gutter-padding {
+  padding-inline: calc(var(--grid-gutter-x) * 0.5);
+}
+
+.container-fluid {
+  --grid-gutter-x: #{$grid-gutter-width};
+  --grid-gutter-y: 0;
+
+  width: 100%;
+  margin-inline: auto;
+  @extend %gutter-padding;
+}
+
+.container {
+  @extend .container-fluid;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-inline: calc(var(--grid-gutter-x) * -0.5);
+  margin-top: calc(var(--grid-gutter-y) * -1);
+
+  > * {
+    margin-top: var(--grid-gutter-y);
+    @extend %gutter-padding;
+  }
+}
+
+.col {
+  flex: 1 0;
+}
+
+@each $breakpoint, $dimension in $grid-breakpoints {
+  $max-width: map-get($container-max-widths, $breakpoint);
+  $infix: if($breakpoint==xs, "", "-#{$breakpoint}");
+  @include responsive($breakpoint) {
+    .container {
+      max-width: $max-width;
+    }
+    // make row-column
+    @for $i from 1 through $grid-columns * 0.5 {
+      .row-cols#{$infix}-#{$i} {
+        flex: 0 0 auto;
+
+        width: math.div(100%, $i);
+      }
+    }
+    // make column
+    @for $i from 1 through $grid-columns {
+      .col#{$infix}-#{$i} {
+        flex: 0 0 auto;
+
+        width: math.div(100%, $grid-columns) * $i;
+      }
+    }
+    // make offsets
+    @for $i from 0 to $grid-columns {
+      .offset#{$infix}-#{$i} {
+        margin-left: math.div(100%, $grid-columns) * $i;
+      }
+    }
+    // make gutters
+    @each $i, $ratio in $gutters {
+      .g#{$infix}-#{$i},
+      .gx#{$infix}-#{$i} {
+        --grid-gutter-x: #{$grid-gutter-width * $ratio};
+      }
+
+      .g#{$infix}-#{$i},
+      .gy#{$infix}-#{$i} {
+        --grid-gutter-y: #{$grid-gutter-width * $ratio};
+      }
+    }
+  }
+}
